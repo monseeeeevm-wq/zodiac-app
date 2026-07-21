@@ -1,0 +1,11 @@
+# Datos y modelos generados en tiempo de ejecución (no se versionan)
+data/*.csv
+models/*.pkl
+models/*.json
+
+# Contraseña de administrador -- NUNCA subir esto a GitHub
+.streamlit/secrets.toml
+
+__pycache__/
+*.pyc
+.DS_Store

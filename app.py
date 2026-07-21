@@ -230,6 +230,27 @@ def inyectar_estilos():
 
     /* Progress / spinner con el mismo acento */
     .stSpinner > div { border-top-color: var(--lavender-deep) !important; }
+
+    /* ============ RESPONSIVE: MÓVIL ============ */
+    @media (max-width: 640px) {
+        .block-container { padding-top: 1.2rem; padding-left: 1rem; padding-right: 1rem; }
+        h1 { font-size: 1.7rem !important; }
+        h2 { font-size: 1.25rem !important; }
+        h3 { font-size: 1.05rem !important; }
+        [data-testid="stForm"] { padding: 18px 16px; border-radius: 18px; }
+        div[role="radiogroup"] label {
+            padding: 12px 14px !important;
+            font-size: 0.95rem;
+            min-height: 44px;
+        }
+        .stButton>button, .stFormSubmitButton>button, .stDownloadButton>button {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            font-size: 1rem;
+        }
+        [data-testid="column"] { min-width: 100% !important; }
+        .stTabs [data-baseweb="tab"] { font-size: 0.8rem; padding: 6px 8px; }
+    }
     </style>
     """, unsafe_allow_html=True)
 

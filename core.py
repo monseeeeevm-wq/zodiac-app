@@ -9,10 +9,13 @@ cuantitativos/cualitativos, y estadística descriptiva implementada
 import os
 import json
 import math
+import random
 import statistics
 from datetime import datetime
 
 import pandas as pd
+
+import sheets_sync
 
 from questions import (
     QUESTIONS, SIGNOS, ELEMENTOS, ELEMENTO_POR_SIGNO,
@@ -64,15 +67,31 @@ def vector_a_modalidad_score(vector):
     return mod_score
 
 
+def elegir_ganador(puntajes: dict):
+    """
+    max() de Python, al haber empate exacto entre 2+ claves, SIEMPRE elige la
+    primera que aparece en el diccionario (orden de inserción) — NO es aleatorio.
+    Con pocas preguntas y pesos en fracciones simples (0.33, 0.5, 1.0), los
+    empates exactos son comunes, así que usar max() a secas sesga sistemáticamente
+    hacia los signos que aparecen primero en SIGNOS/ELEMENTOS/MODALIDADES.
+
+    Esta función corrige eso: si hay empate, elige de verdad al azar entre
+    los empatados, en vez de siempre el primero de la lista.
+    """
+    maximo = max(puntajes.values())
+    empatados = [k for k, v in puntajes.items() if v == maximo]
+    return random.choice(empatados)
+
+
 def nueva_fila(nombre, edad, genero, signo_real, respuestas):
     """Construye una fila completa lista para agregar al dataset."""
     vector, etiquetas = respuestas_a_vector(respuestas)
     elem_score = vector_a_elemento_score(vector)
     mod_score = vector_a_modalidad_score(vector)
 
-    signo_predominante = max(vector, key=vector.get)
-    elemento_predominante = max(elem_score, key=elem_score.get)
-    modalidad_predominante = max(mod_score, key=mod_score.get)
+    signo_predominante = elegir_ganador(vector)
+    elemento_predominante = elegir_ganador(elem_score)
+    modalidad_predominante = elegir_ganador(mod_score)
 
     fila = {
         "id": "resp_" + datetime.now().strftime("%Y%m%d%H%M%S%f"),
@@ -101,24 +120,44 @@ def nueva_fila(nombre, edad, genero, signo_real, respuestas):
 
 # ---------------------------------------------------------------------
 # 2) PERSISTENCIA DEL DATASET
+#    Si hay Google Sheets configurado (st.secrets), es la fuente de verdad
+#    (persiste aunque Streamlit Cloud reinicie el servidor). Si no,
+#    se usa el CSV local (modo desarrollo / sin configurar).
 # ---------------------------------------------------------------------
+def _normalizar_id(df):
+    if not df.empty and "id" in df.columns:
+        df["id"] = "resp_" + df["id"].astype(str).str.replace("resp_", "", regex=False)
+    return df
+
+
 def cargar_dataset():
+    if sheets_sync.is_configured():
+        df = sheets_sync.read_all()
+        if df is not None:
+            return _normalizar_id(df)
     if os.path.exists(DATASET_PATH):
         df = pd.read_csv(DATASET_PATH, dtype={"id": str})
-        df["id"] = "resp_" + df["id"].astype(str).str.replace("resp_", "", regex=False)
-        return df
+        return _normalizar_id(df)
     return pd.DataFrame()
 
 
 def guardar_fila(fila):
-    df = cargar_dataset()
+    if sheets_sync.is_configured():
+        if sheets_sync.append_row(fila):
+            return cargar_dataset()
+        # si falla el guardado en la nube, cae a CSV local como respaldo de emergencia
+
+    df = pd.read_csv(DATASET_PATH, dtype={"id": str}) if os.path.exists(DATASET_PATH) else pd.DataFrame()
     nueva = pd.DataFrame([fila])
     df = pd.concat([df, nueva], ignore_index=True) if not df.empty else nueva
     df.to_csv(DATASET_PATH, index=False)
-    return df
+    return _normalizar_id(df)
 
 
 def reemplazar_dataset(df_nuevo):
+    if sheets_sync.is_configured():
+        if sheets_sync.reemplazar_todo(df_nuevo):
+            return
     df_nuevo.to_csv(DATASET_PATH, index=False)
 
 

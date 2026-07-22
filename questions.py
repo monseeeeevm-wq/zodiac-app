@@ -61,6 +61,7 @@ MODALIDAD_POR_SIGNO = {
 }
 MODALIDADES = ["Cardinal", "Fijo", "Mutable"]
 
+# Calibración de sesgo (Monte Carlo, ver docs/calibracion.md o el historial del chat).
 # Dato curioso / "en tendencia" por signo, se muestra al final del cuestionario
 DATO_CURIOSO_POR_SIGNO = {
     "Aries": "Eres el signo que siempre manda el mensaje de \"yo invito\" sin pensarlo dos veces. Literal el main character energy del zodiaco.",

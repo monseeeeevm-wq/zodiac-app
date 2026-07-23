@@ -286,7 +286,7 @@ def clave_admin_configurada():
 
 
 def render_login_admin():
-    st.sidebar.markdown("### 🔒 Acceso administrador")
+    st.sidebar.markdown("###  Acceso administrador")
     clave_real = clave_admin_configurada()
     if clave_real is None:
         st.sidebar.warning(
@@ -314,7 +314,7 @@ if not st.session_state.is_admin:
         with st.sidebar.expander("¿Eres el administrador?"):
             render_login_admin()
 else:
-    st.sidebar.success("Sesión de administrador activa ✅")
+    st.sidebar.success("Sesión de administrador activa ")
     if st.sidebar.button("Cerrar sesión admin"):
         st.session_state.is_admin = False
         st.rerun()
@@ -370,18 +370,18 @@ def render_cuestionario():
             elem = fila["elemento_predominante"]
             mod = fila["modalidad_predominante"]
             st.markdown(
-                f"- 🔥💧🌍💨 **{elem}** significa {DESCRIPCION_ELEMENTO.get(elem, '')}\n"
+                f"-  **{elem}** significa {DESCRIPCION_ELEMENTO.get(elem, '')}\n"
                 f"- 🔁 **{mod}** significa {DESCRIPCION_MODALIDAD.get(mod, '')}"
             )
             if signo_real:
                 if fila["coincide_signo_real"]:
                     st.info(
-                        f"✨ ¡Coincide con tu signo real (**{signo_real}**)! Tu forma de pensar y actuar "
+                        f" ¡Coincide con tu signo real (**{signo_real}**)! Tu forma de pensar y actuar "
                         f"encaja con los rasgos clásicos de tu signo."
                     )
                 else:
                     st.info(
-                        f"🤔 Tu signo real es **{signo_real}**, pero tus respuestas se parecen más a "
+                        f" Tu signo real es **{signo_real}**, pero tus respuestas se parecen más a "
                         f"**{fila['signo_predominante']}**. No pasa nada — el cuestionario mide rasgos de "
                         f"personalidad (cómo decides, te comunicas, reaccionas al estrés, etc.), no tu fecha "
                         f"de nacimiento. Muchos signos comparten elemento o modalidad, así que es normal que "
@@ -392,7 +392,7 @@ def render_cuestionario():
                 st.markdown(
                     f"""<div style="background:linear-gradient(90deg, rgba(201,167,235,0.18), rgba(247,169,196,0.18));
                     border:1px solid rgba(201,167,235,0.4); border-radius:16px; padding:16px 20px; margin-top:8px;">
-                    <b>💫 {fila['signo_predominante']} en tendencia:</b><br>{dato}
+                    <b> {fila['signo_predominante']} en tendencia:</b><br>{dato}
                     </div>""",
                     unsafe_allow_html=True,
                 )
@@ -403,7 +403,7 @@ def render_cuestionario():
 # MODO ENCUESTADO (público) — solo cuestionario, sin más
 # =======================================================================
 if not st.session_state.is_admin:
-    st.title("✨ Descubre tu Perfil Zodiacal")
+    st.title(" Descubre tu Perfil Zodiacal")
     st.caption("Responde el cuestionario. Tus respuestas ayudan a un proyecto de análisis de datos.")
     render_cuestionario()
     st.stop()
@@ -412,7 +412,7 @@ if not st.session_state.is_admin:
 # =======================================================================
 # MODO ADMINISTRADOR — app completa
 # =======================================================================
-st.title("✨ Perfil Zodiacal — Análisis No Supervisado (Admin)")
+st.title(" Perfil Zodiacal — Análisis No Supervisado (Admin)")
 st.caption(
     "Extracción de Conocimiento en Base de Datos · Unidad IV · "
     "Recolección de datos, estadística propia y clustering (K-Means / Jerárquico)"

@@ -61,6 +61,22 @@ MODALIDAD_POR_SIGNO = {
 }
 MODALIDADES = ["Cardinal", "Fijo", "Mutable"]
 
+# Explicación breve de qué significa cada elemento y modalidad — se muestra
+# junto al resultado para que la persona entienda qué le está diciendo
+# su clasificación, no solo la etiqueta.
+DESCRIPCION_ELEMENTO = {
+    "Fuego": "acción, impulso y pasión. Te mueves por instinto, energía y ganas de hacer las cosas YA.",
+    "Tierra": "practicidad y estabilidad. Te conectas con lo concreto, lo que se puede tocar, planear y construir.",
+    "Aire": "ideas y comunicación. Vives en tu cabeza, conectas conceptos y necesitas hablar/socializar para procesar.",
+    "Agua": "emoción e intuición. Sientes todo intensamente y te mueves más por lo que percibes que por la lógica.",
+}
+
+DESCRIPCION_MODALIDAD = {
+    "Cardinal": "eres quien inicia. Te avientas primero, arrancas proyectos, tomas la iniciativa antes que nadie.",
+    "Fijo": "eres quien sostiene. Una vez que decides algo, no te mueves fácil — constancia y lealtad son tu marca.",
+    "Mutable": "eres quien se adapta. Fluyes con el cambio, te ajustas rápido y no te aferras a un solo plan.",
+}
+
 # Calibración de sesgo (Monte Carlo, ver docs/calibracion.md o el historial del chat).
 # Dato curioso / "en tendencia" por signo, se muestra al final del cuestionario
 DATO_CURIOSO_POR_SIGNO = {

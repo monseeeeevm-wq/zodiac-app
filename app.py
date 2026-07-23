@@ -27,7 +27,10 @@ import plotly.express as px
 import plotly.graph_objects as go
 import streamlit as st
 
-from questions import QUESTIONS, SIGNOS, ELEMENTOS, MODALIDADES, DATO_CURIOSO_POR_SIGNO
+from questions import (
+    QUESTIONS, SIGNOS, ELEMENTOS, MODALIDADES, DATO_CURIOSO_POR_SIGNO,
+    DESCRIPCION_ELEMENTO, DESCRIPCION_MODALIDAD,
+)
 from core import (
     nueva_fila, cargar_dataset, guardar_fila, reemplazar_dataset,
     score_cols, elem_score_cols, mod_score_cols,
@@ -364,6 +367,12 @@ def render_cuestionario():
                 f"(elemento: **{fila['elemento_predominante']}**, "
                 f"modalidad: **{fila['modalidad_predominante']}**)."
             )
+            elem = fila["elemento_predominante"]
+            mod = fila["modalidad_predominante"]
+            st.markdown(
+                f"- 🔥💧🌍💨 **{elem}** significa {DESCRIPCION_ELEMENTO.get(elem, '')}\n"
+                f"- 🔁 **{mod}** significa {DESCRIPCION_MODALIDAD.get(mod, '')}"
+            )
             if signo_real:
                 if fila["coincide_signo_real"]:
                     st.info(
@@ -493,7 +502,7 @@ with tabs[1]:
 
         ini = (st.session_state.pagina - 1) * por_pagina
         fin = ini + por_pagina
-        st.dataframe(df_filtrado[cols_mostrar].iloc[ini:fin], use_container_width=True)
+        st.dataframe(df_filtrado[cols_mostrar].iloc[ini:fin], width='stretch')
 
         st.download_button(
             "⬇️ Descargar datos filtrados (CSV)",
@@ -545,23 +554,23 @@ with tabs[2]:
                     title="Histograma — Signo predominante",
                     category_orders={"signo_predominante": SIGNOS},
                 )
-                st.plotly_chart(fig_hist, use_container_width=True)
+                st.plotly_chart(fig_hist, width='stretch')
             with g2:
                 fig_pie = px.pie(
                     df, names="elemento_predominante",
                     title="Distribución por Elemento",
                 )
-                st.plotly_chart(fig_pie, use_container_width=True)
+                st.plotly_chart(fig_pie, width='stretch')
             with g3:
                 fig_pie_mod = px.pie(
                     df, names="modalidad_predominante",
                     title="Distribución por Modalidad",
                 )
-                st.plotly_chart(fig_pie_mod, use_container_width=True)
+                st.plotly_chart(fig_pie_mod, width='stretch')
 
         if mostrar_numerica:
             st.markdown("#### Estadística numérica por variable (media, mediana, moda, varianza, desv. estándar)")
-            st.dataframe(pd.DataFrame(reporte["estadistica_numerica"]).T, use_container_width=True)
+            st.dataframe(pd.DataFrame(reporte["estadistica_numerica"]).T, width='stretch')
 
         st.download_button(
             "⬇️ Descargar reporte estadístico (TXT)",
@@ -639,7 +648,7 @@ with tabs[3]:
             for xs, ys in zip(dendro["icoord"], dendro["dcoord"]):
                 fig_dendro.add_trace(go.Scatter(x=xs, y=ys, mode="lines", line=dict(color="royalblue"), showlegend=False))
             fig_dendro.update_layout(title="Dendrograma", xaxis_title="Muestras", yaxis_title="Distancia")
-            st.plotly_chart(fig_dendro, use_container_width=True)
+            st.plotly_chart(fig_dendro, width='stretch')
 
         st.markdown("#### Visualización 2D (reducción de dimensionalidad con PCA)")
         st.caption(f"Varianza explicada por los 2 componentes: {resultado['varianza_explicada_pca']}")
@@ -650,7 +659,7 @@ with tabs[3]:
             df_plot, x="PC1", y="PC2", color="cluster", symbol="etiqueta_real",
             title="Clusters encontrados por el algoritmo (PCA 2D)", hover_data=["etiqueta_real"],
         )
-        st.plotly_chart(fig_pca, use_container_width=True)
+        st.plotly_chart(fig_pca, width='stretch')
 
         df_resultados = df.copy().reset_index(drop=True)
         df_resultados["cluster_asignado"] = resultado["labels"]
@@ -658,7 +667,7 @@ with tabs[3]:
         st.dataframe(
             df_resultados[["id", "nombre", "edad", "signo_predominante", "elemento_predominante",
                             "modalidad_predominante", "cluster_asignado"]],
-            use_container_width=True,
+            width='stretch',
         )
 
         colD1, colD2 = st.columns(2)

@@ -237,7 +237,17 @@ def resumen_estadistico(df):
     reporte["frecuencia_modalidad"] = frecuencia_manual(df["modalidad_predominante"].tolist())
 
     if "coincide_signo_real" in df.columns:
-        validos = df["coincide_signo_real"].dropna()
+        def _a_bool(v):
+            if isinstance(v, bool):
+                return v
+            s = str(v).strip().lower()
+            if s in ("true", "1", "verdadero"):
+                return True
+            if s in ("false", "0", "falso"):
+                return False
+            return None  # vacío, "None", NaN, etc.
+
+        validos = df["coincide_signo_real"].map(_a_bool).dropna()
         if len(validos) > 0:
             reporte["pct_coincidencia_signo_real"] = round(float(validos.mean()) * 100, 1)
             reporte["n_con_signo_real"] = int(len(validos))
